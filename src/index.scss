@@ -1,0 +1,51 @@
+$header-height: 15vh;
+$footer-height: 5vh;
+$main-height: calc(100vh - $header-height - $footer-height);
+$dark: darkslategrey;
+
+@import "~bootstrap/scss/bootstrap.scss";
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: monospace;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
+    monospace;
+}
+
+header {
+  height: $header-height;
+}
+
+footer {
+  height: $footer-height;
+}
+
+main {
+  height: $main-height;
+  overflow-x: hidden;
+}
+
+a {
+  text-decoration: none;
+  color: $warning;
+
+  &:hover {
+    color: lighten($warning, 30%);
+  }
+}
+
+.active {
+  text-decoration: underline;
+  text-underline-offset: 5px;
+  text-decoration-thickness: 3px;
+}
