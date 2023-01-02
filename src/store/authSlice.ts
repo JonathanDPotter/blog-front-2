@@ -1,19 +1,25 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { loadState } from "./localStorage";
 
-interface IauthSliceState {
+interface StoreUser {
+  _id: string;
+  username: string;
+}
+
+interface AuthSliceState {
   token: string | null;
-  user: string | null;
+  user: StoreUser | null;
 }
 
 const persistedState = loadState();
+
 
 const initialState = persistedState
   ? ({
       token: persistedState.auth.token,
       user: persistedState.auth.user,
-    } as IauthSliceState)
-  : ({ token: null, user: null } as IauthSliceState);
+    } as AuthSliceState)
+  : ({ token: null, user: null } as AuthSliceState);
 
 const authSlice = createSlice({
   name: "auth",
@@ -22,7 +28,7 @@ const authSlice = createSlice({
     setToken: (state, action: PayloadAction<string>) => {
       state.token = action.payload;
     },
-    setUser: (state, action: PayloadAction<string>) => {
+    setUser: (state, action: PayloadAction<StoreUser>) => {
       state.user = action.payload;
     },
     logOut: (state) => {

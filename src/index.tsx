@@ -1,11 +1,20 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
+import debounce from "debounce";
 import "bootstrap/dist/css/bootstrap.css";
 import "./index.scss";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 import { Provider } from "react-redux";
 import { store } from "./store";
+import { saveState } from "./store/localStorage";
+
+// saves redux state to localStorage
+store.subscribe(
+  debounce(() => {
+    saveState(store.getState());
+  }, 800)
+);
 
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement

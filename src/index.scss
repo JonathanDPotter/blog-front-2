@@ -49,3 +49,27 @@ a {
   text-underline-offset: 5px;
   text-decoration-thickness: 3px;
 }
+
+@for $i from 1 through 20 {
+  .vh-#{$i * 5} {
+    height: calc($i * 5vh);
+  }
+}
+
+@for $i from 1 through 20 {
+  .min-vh-#{$i * 5} {
+    min-height: calc($i * 5vh);
+  }
+}
+
+@for $i from 1 through 20 {
+  .h-#{$i * 5} {
+    min-height: calc($i * 5%)!important;
+  }
+}
+
+@for $i from 1 through 20 {
+  .min-h-#{$i * 5} {
+    min-height: calc($i * 5%)!important;
+  }
+}

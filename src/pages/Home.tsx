@@ -16,26 +16,27 @@ const Home = () => {
   const { user, token } = useAppSelector((state) => state.auth);
 
   useEffect(() => {
-    const checkValid = async (tokenToCheck: string) => {
-      const response = await api.validate(tokenToCheck);
-      if (response.status !== 200) dispatch(logOut());
-    };
-
     data && setPublished(data.filter((datum: PostDocument) => datum.published));
 
-    data && console.log(data);
+    token &&
+      (async () => {
+        const response = await api.validate(token);
+        if (response.status !== 200) dispatch(logOut());
+      })();
 
-    token && checkValid(token);
   }, [data, token, dispatch]);
 
   return (
     <div>
+      {user && <h2>{user.username}</h2>}
       {isLoading ? (
         <p>Loading...</p>
       ) : (
         published?.map((post) => {
-          const { _id, title, body, createdAt, author } = post;
-          return <Post {...{ _id, title, body, createdAt, author }} />;
+          const { _id, title, body, createdAt, updatedAt, author, userId } = post;
+          return (
+            <Post {...{ _id, title, body, createdAt, updatedAt, author, userId }} key={_id} />
+          );
         })
       )}
     </div>

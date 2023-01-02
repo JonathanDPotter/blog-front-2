@@ -10,7 +10,7 @@ describe("Footer", () => {
           <Footer />
         </BrowserRouter>
       );
-      expect(screen.getByText("2022 Jonathan Potter")).toBeInTheDocument();
+      expect(screen.getByText("2023 Jonathan Potter")).toBeInTheDocument();
       expect(screen.getByRole("navigation")).toBeInTheDocument();
     });
   });

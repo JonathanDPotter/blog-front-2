@@ -6,7 +6,7 @@ const Footer = () => {
     <footer className="text-bg-dark container-fluid">
       <div className="row h-100 d-flex align-items-center">
         <div className="col">
-          <span>2022 Jonathan Potter</span>
+          <span>2023 Jonathan Potter</span>
         </div>
         <div className="col">
           <nav
