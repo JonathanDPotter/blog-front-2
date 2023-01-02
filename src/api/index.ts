@@ -23,6 +23,15 @@ const validate = async (token: string) => {
   }
 };
 
+const register = async (user: UserInput) => {
+  try {
+    const response = await instance.post("/api/user/register", user);
+    return response;
+  } catch (error: any) {
+    errorHandler(error);
+  }
+}
+
 const login = async (user: UserInput) => {
   try {
     const response = await instance.post("/api/user/login", user);
@@ -52,6 +61,15 @@ const getPost = async (_id: string) => {
   }
 };
 
-const api = { validate, login, makePost, getPost };
+const getAuthorPosts = async (_id:string) => {
+  try {
+    const response = await instance.get(`api/post/${_id}`);
+    return response;
+  } catch (error: any) {
+    errorHandler(error);
+  }
+}
+
+const api = { validate, register, login, makePost, getPost, getAuthorPosts };
 
 export default api;

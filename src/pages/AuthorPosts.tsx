@@ -1,9 +1,50 @@
-import React from 'react'
+import React, { useEffect, useState } from "react";
+import { useAppSelector } from "../store/hooks";
+import { useParams } from "react-router";
+import { PostDocument } from "../interfaces/post.interface";
+import api from "../api";
+import { useGetAllPostsQuery } from "../store/postApiSlice";
+import Post from "../components/Post";
 
 const AuthorPosts = () => {
-  return (
-    <div>AuthorPosts</div>
-  )
-}
+  const { user } = useAppSelector((store) => store.auth);
+  const { id } = useParams();
 
-export default AuthorPosts
+  const [authorPosts, setAuthorPosts] = useState<PostDocument[] | null>(null);
+
+  const { data, error, isLoading } = useGetAllPostsQuery("");
+
+  useEffect(() => {
+    data &&
+      setAuthorPosts(
+        data.filter(
+          (doc: PostDocument) => doc.published === true && doc.userId === id
+        )
+      );
+  }, [data]);
+
+  return (
+    <div>
+      {" "}
+      <div>
+        {user && <h2>{user.username}</h2>}
+        {isLoading ? (
+          <p>Loading...</p>
+        ) : (
+          authorPosts?.map((post) => {
+            const { _id, title, body, createdAt, updatedAt, author, userId } =
+              post;
+            return (
+              <Post
+                {...{ _id, title, body, createdAt, updatedAt, author, userId }}
+                key={_id}
+              />
+            );
+          })
+        )}
+      </div>
+    </div>
+  );
+};
+
+export default AuthorPosts;
