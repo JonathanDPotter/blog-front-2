@@ -30,7 +30,7 @@ const register = async (user: UserInput) => {
   } catch (error: any) {
     errorHandler(error);
   }
-}
+};
 
 const login = async (user: UserInput) => {
   try {
@@ -61,15 +61,34 @@ const getPost = async (_id: string) => {
   }
 };
 
-const getAuthorPosts = async (_id:string) => {
+const getAuthorPosts = async (_id: string) => {
   try {
     const response = await instance.get(`api/post/${_id}`);
     return response;
   } catch (error: any) {
     errorHandler(error);
   }
-}
+};
 
-const api = { validate, register, login, makePost, getPost, getAuthorPosts };
+const updatePost = async (_id: string, token: string, edit: PostInput) => {
+  try {
+    const response = await instance.patch(`api/post/${_id}`, edit, {
+      headers: { authorization: `Bearer ${token}` },
+    });
+    return response;
+  } catch (error: any) {
+    errorHandler(error);
+  }
+};
+
+const api = {
+  validate,
+  register,
+  login,
+  makePost,
+  getPost,
+  getAuthorPosts,
+  updatePost,
+};
 
 export default api;

@@ -14,6 +14,7 @@ const FullPost = () => {
     updatedAt: new Date(),
     author: "",
     userId: "",
+    published: true,
   };
 
   const [postParams, setPostParams] = useState(dummyParams);
@@ -22,8 +23,16 @@ const FullPost = () => {
     id &&
       (async () => {
         const response = await api.getPost(id);
-        const { _id, title, body, createdAt, updatedAt, author, userId } =
-          response?.data;
+        const {
+          _id,
+          title,
+          body,
+          createdAt,
+          updatedAt,
+          author,
+          userId,
+          published,
+        } = response?.data;
 
         setPostParams({
           _id,
@@ -33,6 +42,7 @@ const FullPost = () => {
           updatedAt,
           author,
           userId,
+          published,
         });
       })();
   }, []);

@@ -8,7 +8,9 @@ import Post from "../components/Post";
 
 const Home = () => {
   const { data, error, isLoading } = useGetAllPostsQuery("");
-  const [published, setPublished] = useState<PostDocument[] | null>(null);
+  const [publishedPosts, setPublishedPosts] = useState<PostDocument[] | null>(
+    null
+  );
   error && console.log(error);
 
   const dispatch = useAppDispatch();
@@ -16,14 +18,14 @@ const Home = () => {
   const { user, token } = useAppSelector((state) => state.auth);
 
   useEffect(() => {
-    data && setPublished(data.filter((datum: PostDocument) => datum.published));
+    data &&
+      setPublishedPosts(data.filter((datum: PostDocument) => datum.published));
 
     token &&
       (async () => {
         const response = await api.validate(token);
         if (response.status !== 200) dispatch(logOut());
       })();
-
   }, [data, token, dispatch]);
 
   return (
@@ -32,10 +34,31 @@ const Home = () => {
       {isLoading ? (
         <p>Loading...</p>
       ) : (
-        published?.map((post) => {
-          const { _id, title, body, createdAt, updatedAt, author, userId } = post;
+        publishedPosts?.map((post) => {
+          const {
+            _id,
+            title,
+            body,
+            createdAt,
+            updatedAt,
+            author,
+            userId,
+            published,
+          } = post;
           return (
-            <Post {...{ _id, title, body, createdAt, updatedAt, author, userId }} key={_id} />
+            <Post
+              {...{
+                _id,
+                title,
+                body,
+                createdAt,
+                updatedAt,
+                author,
+                userId,
+                published,
+              }}
+              key={_id}
+            />
           );
         })
       )}

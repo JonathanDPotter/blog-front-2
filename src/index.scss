@@ -50,6 +50,10 @@ a {
   text-decoration-thickness: 3px;
 }
 
+.text-sm {
+  font-size: .75rem;
+}
+
 @for $i from 1 through 20 {
   .vh-#{$i * 5} {
     height: calc($i * 5vh);

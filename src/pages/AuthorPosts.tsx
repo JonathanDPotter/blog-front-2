@@ -17,8 +17,10 @@ const AuthorPosts = () => {
   useEffect(() => {
     data &&
       setAuthorPosts(
-        data.filter(
-          (doc: PostDocument) => doc.published === true && doc.userId === id
+        data.filter((doc: PostDocument) =>
+          id === user?._id
+            ? doc.userId === id
+            : doc.published === true && doc.userId === id
         )
       );
   }, [data]);
@@ -27,16 +29,33 @@ const AuthorPosts = () => {
     <div>
       {" "}
       <div>
-        {user && <h2>{user.username}</h2>}
+        {user && <h2>{user.username}'s posts</h2>}
         {isLoading ? (
           <p>Loading...</p>
         ) : (
           authorPosts?.map((post) => {
-            const { _id, title, body, createdAt, updatedAt, author, userId } =
-              post;
+            const {
+              _id,
+              title,
+              body,
+              createdAt,
+              updatedAt,
+              author,
+              userId,
+              published,
+            } = post;
             return (
               <Post
-                {...{ _id, title, body, createdAt, updatedAt, author, userId }}
+                {...{
+                  _id,
+                  title,
+                  body,
+                  createdAt,
+                  updatedAt,
+                  author,
+                  userId,
+                  published,
+                }}
                 key={_id}
               />
             );

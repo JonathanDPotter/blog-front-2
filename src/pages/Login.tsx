@@ -18,7 +18,7 @@ const Login = () => {
     event.preventDefault();
     if (register) {
       const response = await api.register(formState);
-      if (!response) return null
+      if (!response) return null;
     }
 
     const response = await api.login(formState);
@@ -34,14 +34,19 @@ const Login = () => {
     setFormState({ ...formState, [id]: value });
   };
 
+  const forminputStyles = "form-group row my-1";
+  const formLabelStyles = "col-sm-2 col-form-label";
+  const formInputDivStyles = "col-sm-7";
+  const formWarningStyles = "col-sm-3 col-form-label text-danger";
+
   return (
     <div className="d-flex h-100 align-items-center">
       <form onSubmit={handleSubmit} className="w-75 mx-auto">
-        <div className="form-group row my-1">
-          <label htmlFor="username" className="col-sm-2 col-form-label">
+        <div className={forminputStyles}>
+          <label htmlFor="username" className={formLabelStyles}>
             username
           </label>
-          <div className="col-sm-10">
+          <div className={formInputDivStyles}>
             <input
               className="form-control"
               type="text"
@@ -53,13 +58,16 @@ const Login = () => {
               onChange={handleChange}
             />
           </div>
+          {!username ? (
+            <label className={formWarningStyles}>* required</label>
+          ) : null}
         </div>
 
-        <div className="form-group row my-1">
-          <label htmlFor="password" className="col-sm-2 col-form-label">
+        <div className={forminputStyles}>
+          <label htmlFor="password" className={formLabelStyles}>
             password
           </label>
-          <div className="col-sm-10">
+          <div className={formInputDivStyles}>
             <input
               className="form-control"
               type={register ? "new-password" : "password"}
@@ -71,14 +79,17 @@ const Login = () => {
               onChange={handleChange}
             />
           </div>
+          {!password ? (
+            <label className={formWarningStyles}>* required</label>
+          ) : null}
         </div>
 
         {register ? (
-          <div className="form-group row my-1">
-            <label htmlFor="repeatPassword" className="col-sm-2 col-form-label">
+          <div className={forminputStyles}>
+            <label htmlFor="repeatPassword" className={formLabelStyles}>
               repeat password
             </label>
-            <div className="col-sm-10 vh-10">
+            <div className={`${formInputDivStyles} vh-10`}>
               <input
                 className="form-control"
                 type={register ? "new-password" : "password"}
@@ -92,6 +103,9 @@ const Login = () => {
                 }
               />
             </div>
+            {password !== repeatPassword ? (
+              <label className={formWarningStyles}>*must match</label>
+            ) : null}
           </div>
         ) : (
           <div className="col vh-10"></div>
@@ -104,7 +118,7 @@ const Login = () => {
                 name="checkbox"
                 id="checkbox"
                 onChange={() => setRegister(!register)}
-                value={register ? "on" : "off"}
+                checked={register}
                 aria-label="Checkbox to toggle registration or login."
               />
               <label htmlFor="checkbox" className="ms-2">
