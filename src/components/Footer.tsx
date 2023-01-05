@@ -14,7 +14,6 @@ const Footer = () => {
             aria-label="secondary"
           >
             <NavLink to="/about">About</NavLink>
-            <NavLink to="/contact">Contact</NavLink>
           </nav>
         </div>
       </div>

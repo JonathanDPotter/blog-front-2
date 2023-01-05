@@ -1,6 +1,6 @@
 import axios from "axios";
-import { UserInput } from "../interfaces/user.interface";
-import { PostInput } from "../interfaces/post.interface";
+import { UserInput } from "../components/interfaces/user.interface";
+import { PostInput } from "../components/interfaces/post.interface";
 
 const instance = axios.create({
   baseURL: "http://localhost:1337",

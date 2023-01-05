@@ -3,13 +3,16 @@ import api from "../api";
 import { useAppDispatch } from "../store/hooks";
 import { useNavigate } from "react-router";
 import { setToken, setUser } from "../store/authSlice";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faInfoCircle } from "@fortawesome/free-solid-svg-icons";
 
 const Login = () => {
-  const initialState = { username: "", password: "" };
+  const initialState = { username: "Test User", password: "Password123" };
   const [formState, setFormState] = useState(initialState);
   const { username, password } = formState;
   const [register, setRegister] = useState(false);
   const [repeatPassword, setRepeatPassword] = useState("");
+  const [showInfo, setShowInfo] = useState(false);
 
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
@@ -42,6 +45,16 @@ const Login = () => {
   return (
     <div className="d-flex h-100 align-items-center">
       <form onSubmit={handleSubmit} className="w-75 mx-auto">
+        <div className="d-flex justify-content-end w-100">
+          <p className={showInfo ? "text-black" : "text-white"}>
+            You can register your own username or just use the provided default.
+          </p>
+          <FontAwesomeIcon
+            icon={faInfoCircle}
+            onMouseOver={() => setShowInfo(true)}
+            onMouseOut={() => setShowInfo(false)}
+          />
+        </div>
         <div className={forminputStyles}>
           <label htmlFor="username" className={formLabelStyles}>
             username

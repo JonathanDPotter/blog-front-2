@@ -1,7 +1,7 @@
 import React, { ChangeEvent, FormEvent, useState } from "react";
 import { useAppSelector } from "../store/hooks";
 import api from "../api";
-import { UserDocument } from "../interfaces/user.interface";
+import { UserDocument } from "../components/interfaces/user.interface";
 import { useNavigate } from "react-router";
 import { useGetAllPostsQuery } from "../store/postApiSlice";
 

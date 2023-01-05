@@ -23,16 +23,13 @@ describe("Footer", () => {
       );
 
       const aboutLink = screen.getByText("About");
-      const contactLink = screen.getByText("Contact");
 
-      expect(aboutLink.className).toMatch(/(?!active)/);
-      expect(contactLink.className).toMatch(/(?!active)/);
+      expect(aboutLink.className).toMatch(/^((?!active).)*$/);
 
       // simulates clicking the link
-      act(() => contactLink.click());
+      act(() => aboutLink.click());
 
-      expect(aboutLink.className).toMatch(/(?!active)/);
-      expect(contactLink.className).toMatch(/active/);
+      expect(aboutLink.className).toMatch(/active/);
     });
   });
 });
