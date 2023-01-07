@@ -81,6 +81,17 @@ const updatePost = async (_id: string, token: string, edit: PostInput) => {
   }
 };
 
+const deletePost = async (_id: string, token: string) => {
+  try {
+    const response = await instance.delete(`api/post/${_id}`, {
+      headers: { authorization: `Bearer ${token}` },
+    });
+    return response;
+  } catch (error: any) {
+    errorHandler(error);
+  }
+};
+
 const api = {
   validate,
   register,
@@ -89,6 +100,7 @@ const api = {
   getPost,
   getAuthorPosts,
   updatePost,
+  deletePost
 };
 
 export default api;

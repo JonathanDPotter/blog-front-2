@@ -1,4 +1,4 @@
-import React, { ChangeEvent, FC, useEffect, useState } from "react";
+import { FC, useEffect, useState } from "react";
 import { useAppSelector } from "../store/hooks";
 import { useLocation, useNavigate } from "react-router";
 import { useGetAllPostsQuery } from "../store/postApiSlice";
@@ -59,7 +59,7 @@ const Post: FC<Props> = ({
 
     if (response?.status === 200) {
       refetch();
-      window.location.reload();
+      setEditing(false);
     }
   };
 
@@ -68,6 +68,17 @@ const Post: FC<Props> = ({
     setNewTitle(title);
     setIsPublished(published);
     setEditing(true);
+  };
+
+  const handleDelete = async () => {
+    if (
+      !window.confirm(`Are you sure that you want to delete ${title}?`) ||
+      !token
+    )
+      return;
+    const response = await api.deletePost(_id, token);
+    alert(response?.data);
+    refetch();
   };
 
   useEffect(() => {
@@ -175,7 +186,11 @@ const Post: FC<Props> = ({
           <div className="col">
             {!atHome && userIsAuthor ? (
               <div>
-                <button type="button" className="btn btn-danger">
+                <button
+                  type="button"
+                  className="btn btn-danger"
+                  onClick={handleDelete}
+                >
                   Delete
                 </button>
                 {editing ? (
