@@ -3,7 +3,7 @@ import { UserInput } from "../components/interfaces/user.interface";
 import { PostInput } from "../components/interfaces/post.interface";
 
 const instance = axios.create({
-  baseURL: "http://localhost:1337",
+  baseURL: "https://jonathan-potter-blog-api-2.herokuapp.com/",
 });
 
 const errorHandler = (error: any) => {

@@ -17,7 +17,7 @@ const About = () => {
         </p>
         <hr />
         <h3>Functionality</h3>
-        <p>When a user opens the home page they can view all published blog posts. The newest posts are at the top, and the user can scroll down to see older posts. If the user clicks on the title of a post, the post will open in full on a seperate page. If the user is logged in and is the author of the post, the user will be able to edit or delete the post. The user can see all posts by a particular author by clicking on the author's name. A user can also make a new post.</p>
+        <p>When a user opens the home page they can view all published blog posts. The newest posts are at the top, and the user can scroll down to see older posts. If the user clicks on the title of a post, the post will open in full on a seperate page. If the user is logged in and is the author of the post, the user will be able to edit or delete the post. The user can see all posts by a particular author by clicking on the author's name. A user can also make a new post and it they set it as published, it will show up on the home page.</p>
       </div>
     </div>
   );

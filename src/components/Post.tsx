@@ -57,8 +57,6 @@ const Post: FC<Props> = ({
 
     const response = await api.updatePost(_id, token, input);
 
-    console.log(response);
-
     if (response?.status === 200) {
       refetch();
       window.location.reload();
