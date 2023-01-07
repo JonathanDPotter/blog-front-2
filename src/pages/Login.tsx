@@ -5,6 +5,7 @@ import { useNavigate } from "react-router";
 import { setToken, setUser } from "../store/authSlice";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faInfoCircle } from "@fortawesome/free-solid-svg-icons";
+import ErrorToast from "../components/ErrorToast";
 
 const Login = () => {
   const initialState = { username: "Test User", password: "Password123" };
@@ -13,6 +14,8 @@ const Login = () => {
   const [register, setRegister] = useState(false);
   const [repeatPassword, setRepeatPassword] = useState("");
   const [showInfo, setShowInfo] = useState(false);
+  const [showError, setShowError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
 
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
@@ -20,16 +23,26 @@ const Login = () => {
   const handleSubmit = async (event: FormEvent) => {
     event.preventDefault();
     if (register) {
-      const response = await api.register(formState);
-      if (!response) return null;
+      try {
+        const response = await api.register(formState);
+        if (!response) return null;
+      } catch (error: any) {
+        setErrorMessage(error.message);
+        setShowError(true);
+      }
     }
 
-    const response = await api.login(formState);
-    const { token, user } = response?.data;
-    dispatch(setToken(token));
-    dispatch(setUser(user));
-    setFormState(initialState);
-    navigate("/");
+    try {
+      const response = await api.login(formState);
+      const { token, user } = response?.data;
+      dispatch(setToken(token));
+      dispatch(setUser(user));
+      setFormState(initialState);
+      navigate("/");
+    } catch (error: any) {
+      setErrorMessage(error.message);
+      setShowError(true);
+    }
   };
 
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -152,6 +165,11 @@ const Login = () => {
           Submit
         </button>
       </form>
+      <ErrorToast
+        show={showError}
+        setShow={setShowError}
+        errorMessage={errorMessage}
+      />
     </div>
   );
 };

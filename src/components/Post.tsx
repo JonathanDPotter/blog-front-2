@@ -1,8 +1,10 @@
-import { FC, useEffect, useState } from "react";
-import { useAppSelector } from "../store/hooks";
+import { FC, SetStateAction, useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router";
+import { Button, Card, Col, Form, InputGroup, Row } from "react-bootstrap";
+import { useAppSelector } from "../store/hooks";
 import { useGetAllPostsQuery } from "../store/postApiSlice";
 import api from "../api";
+import ErrorToast from "./ErrorToast";
 
 interface Props {
   _id: string;
@@ -35,12 +37,13 @@ const Post: FC<Props> = ({
 
   const [userIsAuthor, setUserIsAuthor] = useState(false);
   const [atHome, setAtHome] = useState(false);
-  const [possibleEllipsis, setPossibleEllipsis] = useState("");
   const [editing, setEditing] = useState(false);
   const [isEdited, setIsEdited] = useState(false);
   const [newTitle, setNewTitle] = useState("");
   const [newBody, setNewBody] = useState("");
   const [isPublished, setIsPublished] = useState(true);
+  const [showError, setShowError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
 
   // length in characters of the preview on the home page
   const previewLength = 200;
@@ -54,12 +57,13 @@ const Post: FC<Props> = ({
     };
 
     if (!token) return navigate("/login");
-
-    const response = await api.updatePost(_id, token, input);
-
-    if (response?.status === 200) {
+    try {
+      await api.updatePost(_id, token, input);
       refetch();
       setEditing(false);
+    } catch (error: any) {
+      setErrorMessage(error.message);
+      setShowError(true);
     }
   };
 
@@ -76,16 +80,16 @@ const Post: FC<Props> = ({
       !token
     )
       return;
-    const response = await api.deletePost(_id, token);
-    alert(response?.data);
-    refetch();
-  };
 
-  useEffect(() => {
-    body.length > previewLength
-      ? setPossibleEllipsis("...")
-      : setPossibleEllipsis("");
-  }, [body]);
+    try {
+      const response = await api.deletePost(_id, token);
+      alert(response?.data);
+      refetch();
+    } catch (error: any) {
+      setErrorMessage(error.message);
+      setShowError(true);
+    }
+  };
 
   useEffect(() => {
     user?._id === userId ? setUserIsAuthor(true) : setUserIsAuthor(false);
@@ -100,10 +104,10 @@ const Post: FC<Props> = ({
   });
 
   return (
-    <div className="card m-4">
-      <div className="card-header container-fluid">
-        <div className="row">
-          <div className="col-6">
+    <Card>
+      <Card.Header>
+        <Row>
+          <Col>
             {editing ? (
               <input
                 id="newTitle"
@@ -112,39 +116,41 @@ const Post: FC<Props> = ({
                 onChange={(event) => setNewTitle(event.currentTarget.value)}
               />
             ) : (
-              <button
-                type="button"
-                style={{ all: "unset", cursor: "pointer" }}
-                onClick={atHome ? () => navigate(`/fullpost/${_id}`) : () => {}}
+              <Card.Title
+                onClick={atHome ? () => navigate(`fullpost/${_id}`) : () => {}}
+                title={atHome ? "Click to open full post." : "Post Title"}
+                className="pointer"
               >
-                <h3 title={atHome ? "Click to open full post." : "Post Title"}>
-                  {title}
-                </h3>
-              </button>
+                {title}
+              </Card.Title>
             )}
-          </div>
-          <div className="col-4">
-            <a
-              href={`/authorposts/${userId}`}
-              className="text-bg-light"
+          </Col>
+          <Col>
+            <Card.Text
+              onClick={() => navigate(`/authorposts/${userId}`)}
               title="Click to see all of this Author's posts."
+              className="pointer"
             >
-              <p>by: {author}</p>
-            </a>
-          </div>
-          <div className="col-2">
+              by: {author}
+            </Card.Text>
+          </Col>
+          <Col>
             {userIsAuthor && published && !atHome && (
-              <p className="text-sm">published</p>
+              <Card.Text className="text-sm">published</Card.Text>
             )}
-          </div>
-        </div>
-      </div>
-      <div className="card-body">
+          </Col>
+        </Row>
+      </Card.Header>
+      <Card.Body>
         {atHome ? (
-          body.substring(0, previewLength) + possibleEllipsis
+          <Card.Text>
+            {body.substring(0, previewLength) +
+              (body.length > previewLength ? "..." : "")}
+          </Card.Text>
         ) : editing ? (
-          <textarea
-            className="w-75 vh-20"
+          <Form.Control
+            as="textarea"
+            rows={5}
             id="newBody"
             title="Post Body"
             value={newBody}
@@ -155,76 +161,70 @@ const Post: FC<Props> = ({
         )}
 
         {editing ? (
-          <div className="input-group-prepend">
-            <div className="input-group-text">
-              <input
-                type="checkbox"
+          <>
+            <InputGroup className="mb-3">
+              <Form.Check
                 name="isPublished"
                 id="isPublished"
                 onChange={() => setIsPublished(!isPublished)}
                 checked={isPublished}
+                label="Published?"
                 aria-label="Checkbox to toggle published status."
               />
-              <label htmlFor="isPublished" className="ms-2">
-                Published?
-              </label>
-            </div>
-          </div>
+            </InputGroup>
+          </>
         ) : null}
-      </div>
-      <div className="card-footer">
-        <div className="row">
-          <div className="col">
-            <p>{new Date(createdAt).toLocaleDateString()}</p>
+      </Card.Body>
+      <Card.Footer>
+        <Row>
+          <Col>
+            <Card.Text>{new Date(createdAt).toLocaleDateString()}</Card.Text>
             {isEdited ? (
-              <p className="text-sm">
+              <Card.Text className="text-sm">
                 Edited: {new Date(updatedAt).toLocaleDateString()}
-              </p>
+              </Card.Text>
             ) : null}
-          </div>
-          <div className="col">{/*intentionally empty*/}</div>
-          <div className="col">
+          </Col>
+          <Col>{/*intentionally empty*/}</Col>
+          <Col>
             {!atHome && userIsAuthor ? (
-              <div>
-                <button
-                  type="button"
-                  className="btn btn-danger"
-                  onClick={handleDelete}
-                >
+              <>
+                <Button variant="danger" onClick={handleDelete}>
                   Delete
-                </button>
+                </Button>
                 {editing ? (
-                  <button
-                    type="button"
-                    className="btn btn-warning ms-2"
-                    onClick={saveEdits}
-                  >
+                  <Button variant="warning" onClick={saveEdits}>
                     Save
-                  </button>
+                  </Button>
                 ) : (
-                  <button
-                    type="button"
-                    className="btn btn-secondary ms-2"
+                  <Button
+                    className="ms-2"
+                    variant="secondary"
                     onClick={handleEdit}
                   >
                     edit
-                  </button>
+                  </Button>
                 )}
                 {editing ? (
-                  <button
-                    type="button"
-                    className="btn btn-secondary ms-2"
+                  <Button
+                    className="ms-2"
+                    variant="secondary"
                     onClick={() => setEditing(false)}
                   >
                     cancel
-                  </button>
+                  </Button>
                 ) : null}
-              </div>
+              </>
             ) : null}
-          </div>
-        </div>
-      </div>
-    </div>
+          </Col>
+        </Row>
+      </Card.Footer>
+      <ErrorToast
+        show={showError}
+        setShow={setShowError}
+        errorMessage={errorMessage}
+      />
+    </Card>
   );
 };
 

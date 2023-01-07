@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "react-router";
 import api from "../api";
 import Post from "../components/Post";
+import ErrorToast from "../components/ErrorToast";
 
 const FullPost = () => {
   const { id } = useParams();
@@ -18,38 +19,50 @@ const FullPost = () => {
   };
 
   const [postParams, setPostParams] = useState(dummyParams);
+  const [showError, setShowError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
 
   useEffect(() => {
     id &&
       (async () => {
-        const response = await api.getPost(id);
-        const {
-          _id,
-          title,
-          body,
-          createdAt,
-          updatedAt,
-          author,
-          userId,
-          published,
-        } = response?.data;
+        try {
+          const response = await api.getPost(id);
+          const {
+            _id,
+            title,
+            body,
+            createdAt,
+            updatedAt,
+            author,
+            userId,
+            published,
+          } = response?.data;
 
-        setPostParams({
-          _id,
-          title,
-          body,
-          createdAt,
-          updatedAt,
-          author,
-          userId,
-          published,
-        });
+          setPostParams({
+            _id,
+            title,
+            body,
+            createdAt,
+            updatedAt,
+            author,
+            userId,
+            published,
+          });
+        } catch (error: any) {
+          setErrorMessage(error.message);
+          setShowError(true);
+        }
       })();
   }, []);
 
   return (
     <div>
       <Post {...postParams} />
+      <ErrorToast
+        show={showError}
+        setShow={setShowError}
+        errorMessage={errorMessage}
+      />
     </div>
   );
 };

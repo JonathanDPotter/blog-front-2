@@ -51,7 +51,11 @@ a {
 }
 
 .text-sm {
-  font-size: .75rem;
+  font-size: 0.75rem;
+}
+
+.pointer {
+  cursor: pointer;
 }
 
 @for $i from 1 through 20 {
@@ -68,12 +72,12 @@ a {
 
 @for $i from 1 through 20 {
   .h-#{$i * 5} {
-    min-height: calc($i * 5%)!important;
+    min-height: calc($i * 5%) !important;
   }
 }
 
 @for $i from 1 through 20 {
   .min-h-#{$i * 5} {
-    min-height: calc($i * 5%)!important;
+    min-height: calc($i * 5%) !important;
   }
 }

@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { useAppSelector } from "../store/hooks";
 import { useParams } from "react-router";
-import { PostDocument } from "../components/interfaces/post.interface";
-import api from "../api";
+import { PostDocument } from "../interfaces/post.interface";
 import { useGetAllPostsQuery } from "../store/postApiSlice";
 import Post from "../components/Post";
+import { Spinner } from "react-bootstrap";
 
 const AuthorPosts = () => {
   const { user } = useAppSelector((store) => store.auth);
@@ -39,7 +39,11 @@ const AuthorPosts = () => {
       <div>
         {user && <h2>{user.username}'s posts</h2>}
         {isLoading ? (
-          <p>Loading...</p>
+          <div className="h-100 w-100 d-flex align-items-center justify-content-center">
+            <Spinner animation="border" role="status">
+              <span className="visually-hidden">Loading...</span>
+            </Spinner>
+          </div>
         ) : (
           sortedPosts?.map((post) => {
             const {

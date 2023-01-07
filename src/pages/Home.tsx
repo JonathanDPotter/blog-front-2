@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from "react";
+import { Spinner } from "react-bootstrap";
 import { logOut } from "../store/authSlice";
 import { useAppDispatch, useAppSelector } from "../store/hooks";
 import { useGetAllPostsQuery } from "../store/postApiSlice";
 import api from "../api";
-import { PostDocument } from "../components/interfaces/post.interface";
+import { PostDocument } from "../interfaces/post.interface";
 import Post from "../components/Post";
+import ErrorToast from "../components/ErrorToast";
 
 const Home = () => {
   const { data, error, isLoading } = useGetAllPostsQuery("");
@@ -13,6 +15,9 @@ const Home = () => {
   );
   const [sortedPosts, setSortedPosts] = useState<PostDocument[] | null>(null);
   error && console.log(error);
+
+  const [showError, setShowError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
 
   const dispatch = useAppDispatch();
 
@@ -24,8 +29,13 @@ const Home = () => {
 
     token &&
       (async () => {
-        const response = await api.validate(token);
-        if (response.status !== 200) dispatch(logOut());
+        try {
+          await api.validate(token);
+        } catch (error: any) {
+          setErrorMessage(error.message);
+          setShowError(true);
+          dispatch(logOut());
+        }
       })();
   }, [data, token, dispatch]);
 
@@ -37,10 +47,14 @@ const Home = () => {
   }, [publishedPosts]);
 
   return (
-    <div>
+    <div className="h-100">
       {user && <h2>{user.username}</h2>}
       {isLoading ? (
-        <p>Loading...</p>
+        <div className="h-100 w-100 d-flex align-items-center justify-content-center">
+          <Spinner animation="border" role="status">
+            <span className="visually-hidden">Loading...</span>
+          </Spinner>
+        </div>
       ) : (
         sortedPosts?.map((post) => {
           const {
@@ -70,6 +84,11 @@ const Home = () => {
           );
         })
       )}
+      <ErrorToast
+        show={showError}
+        setShow={setShowError}
+        errorMessage={errorMessage}
+      />
     </div>
   );
 };

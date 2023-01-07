@@ -1,15 +1,18 @@
 import React, { ChangeEvent, FormEvent, useState } from "react";
 import { useAppSelector } from "../store/hooks";
 import api from "../api";
-import { UserDocument } from "../components/interfaces/user.interface";
+import { UserDocument } from "../interfaces/user.interface";
 import { useNavigate } from "react-router";
 import { useGetAllPostsQuery } from "../store/postApiSlice";
+import ErrorToast from "../components/ErrorToast";
 
 const MakePost = () => {
   const initialFormState = { title: "", body: "", published: false };
 
   const [formState, setFormState] = useState(initialFormState);
   const { title, body, published } = formState;
+  const [showError, setShowError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
 
   const { refetch } = useGetAllPostsQuery("");
   const { user, token } = useAppSelector((state) => state.auth);
@@ -30,10 +33,15 @@ const MakePost = () => {
     if (!user || !token) return alert("missing auth data");
     const userId = user._id as UserDocument["_id"];
     const submission = { ...formState, userId };
-    await api.makePost(submission, token);
-    setFormState(initialFormState);
-    refetch();
-    navigate("/");
+    try {
+      await api.makePost(submission, token);
+      setFormState(initialFormState);
+      refetch();
+      navigate("/");
+    } catch (error: any) {
+      setErrorMessage(error.message);
+      setShowError(true);
+    }
   };
 
   return (
@@ -81,6 +89,11 @@ const MakePost = () => {
       <button type="submit" className="btn btn-primary">
         Submit
       </button>
+      <ErrorToast
+        show={showError}
+        setShow={setShowError}
+        errorMessage={errorMessage}
+      />
     </form>
   );
 };
