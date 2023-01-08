@@ -1,6 +1,9 @@
-import { FC, SetStateAction, useEffect, useState } from "react";
+import { FC, useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router";
 import { Button, Card, Col, Form, InputGroup, Row } from "react-bootstrap";
+import ReactMarkdown from "react-markdown";
+import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
+import { dark } from "react-syntax-highlighter/dist/esm/styles/prism";
 import { useAppSelector } from "../store/hooks";
 import { useGetAllPostsQuery } from "../store/postApiSlice";
 import api from "../api";
@@ -131,37 +134,34 @@ const Post: FC<Props> = ({
               title="Click to see all of this Author's posts."
               className="pointer"
             >
-              by: {author}
+              <strong>by: {author}</strong>
             </Card.Text>
           </Col>
           <Col>
-            {userIsAuthor && published && !atHome && (
-              <Card.Text className="text-sm">published</Card.Text>
+            {userIsAuthor && published && !atHome ? (
+              <Card.Text>
+                <small>published</small>
+              </Card.Text>
+            ) : (
+              <Card.Text>
+                <small>not published</small>
+              </Card.Text>
             )}
           </Col>
         </Row>
       </Card.Header>
       <Card.Body>
-        {atHome ? (
-          <Card.Text>
-            {body.substring(0, previewLength) +
-              (body.length > previewLength ? "..." : "")}
-          </Card.Text>
-        ) : editing ? (
-          <Form.Control
-            as="textarea"
-            rows={5}
-            id="newBody"
-            title="Post Body"
-            value={newBody}
-            onChange={(event) => setNewBody(event.currentTarget.value)}
-          />
-        ) : (
-          body
-        )}
-
         {editing ? (
           <>
+            <Form.Control
+              className="pre-wrap"
+              as="textarea"
+              rows={20}
+              id="newBody"
+              title="Post Body"
+              value={newBody}
+              onChange={(event) => setNewBody(event.currentTarget.value)}
+            />{" "}
             <InputGroup className="mb-3">
               <Form.Check
                 name="isPublished"
@@ -173,7 +173,36 @@ const Post: FC<Props> = ({
               />
             </InputGroup>
           </>
-        ) : null}
+        ) : (
+          <ReactMarkdown
+            className="pre-wrap"
+            children={
+              atHome
+                ? body.substring(0, previewLength) +
+                  (body.length > previewLength ? "..." : "")
+                : body
+            }
+            components={{
+              code({ node, inline, className, children, ...props }) {
+                const match = /language-(\w+)/.exec(className || "");
+                return !inline && match ? (
+                  <SyntaxHighlighter
+                    children={String(children).replace(/\n$/, "")}
+                    // @ts-ignore
+                    style={dark} // theme
+                    language={match[1]}
+                    PreTag="section" // parent tag
+                    {...props}
+                  />
+                ) : (
+                  <code className={className} {...props}>
+                    {children}
+                  </code>
+                );
+              },
+            }}
+          />
+        )}
       </Card.Body>
       <Card.Footer>
         <Row>

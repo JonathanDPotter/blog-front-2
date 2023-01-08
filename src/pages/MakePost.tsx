@@ -1,10 +1,12 @@
-import React, { ChangeEvent, FormEvent, useState } from "react";
+import { ChangeEvent, FormEvent, useState } from "react";
 import { useAppSelector } from "../store/hooks";
 import api from "../api";
 import { UserDocument } from "../interfaces/user.interface";
 import { useNavigate } from "react-router";
 import { useGetAllPostsQuery } from "../store/postApiSlice";
 import ErrorToast from "../components/ErrorToast";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faMarkdown } from "@fortawesome/free-brands-svg-icons";
 
 const MakePost = () => {
   const initialFormState = { title: "", body: "", published: false };
@@ -60,7 +62,16 @@ const MakePost = () => {
         />
       </div>
       <div className="form-group h-50">
-        <label htmlFor="body">body</label>
+        <label htmlFor="body">
+          body -you can enter plain text or markdown{" "}
+          <a
+            href="https://commonmark.org/"
+            title="link to commonMark.org"
+            className="text-dark"
+          >
+            <FontAwesomeIcon icon={faMarkdown} />
+          </a>
+        </label>
         <textarea
           className="form-control h-90"
           name="body"
