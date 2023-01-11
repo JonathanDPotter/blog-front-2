@@ -1,10 +1,11 @@
 import React from "react";
+import { Container } from "react-bootstrap";
 
 const NotFound = () => {
   return (
-    <div className="d-flex align-items-center justify-content-center h-100">
+    <Container>
       <h2>404 not found</h2>
-    </div>
+    </Container>
   );
 };
 

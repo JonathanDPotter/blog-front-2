@@ -4,17 +4,19 @@ import api from "../api";
 import { UserDocument } from "../interfaces/user.interface";
 import { useNavigate } from "react-router";
 import { useGetAllPostsQuery } from "../store/postApiSlice";
-import ErrorToast from "../components/ErrorToast";
+import InfoToast from "../components/InfoToast";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMarkdown } from "@fortawesome/free-brands-svg-icons";
+import { Button, Form, InputGroup, Stack } from "react-bootstrap";
 
 const MakePost = () => {
   const initialFormState = { title: "", body: "", published: false };
 
   const [formState, setFormState] = useState(initialFormState);
   const { title, body, published } = formState;
-  const [showError, setShowError] = useState(false);
-  const [errorMessage, setErrorMessage] = useState("");
+  const [toast, setToast] = useState<{ message: string; title: string } | null>(
+    null
+  );
 
   const { refetch } = useGetAllPostsQuery("");
   const { user, token } = useAppSelector((state) => state.auth);
@@ -32,7 +34,8 @@ const MakePost = () => {
 
   const handleSubmit = async (event: FormEvent) => {
     event.preventDefault();
-    if (!user || !token) return alert("missing auth data");
+    if (!user || !token)
+      return setToast({ title: "Error", message: "missing auth data" });
     const userId = user._id as UserDocument["_id"];
     const submission = { ...formState, userId };
     try {
@@ -40,72 +43,70 @@ const MakePost = () => {
       setFormState(initialFormState);
       refetch();
       navigate("/");
-    } catch (error: any) {
-      setErrorMessage(error.message);
-      setShowError(true);
-    }
+    } catch (error: any) {}
   };
 
   return (
-    <form onSubmit={handleSubmit} className="container h-100">
-      <div className="form-group">
-        <label htmlFor="title">title</label>
-        <input
-          className="form-control"
-          type="text"
-          name="title"
-          id="title"
-          title="Post Title"
-          placeholder="enter title"
-          value={title}
-          onChange={handleChange}
-        />
-      </div>
-      <div className="form-group h-50">
-        <label htmlFor="body">
-          body -you can enter plain text or markdown{" "}
-          <a
-            href="https://commonmark.org/"
-            title="link to commonMark.org"
-            className="text-dark"
-          >
-            <FontAwesomeIcon icon={faMarkdown} />
-          </a>
-        </label>
-        <textarea
-          className="form-control h-90"
-          name="body"
-          id="body"
-          title="Post Body"
-          placeholder="enter body"
-          value={body}
-          onChange={handleChange}
-        />
-      </div>
-      <div className="input-group-prepend mb-2">
-        <div className="input-group-text">
-          <input
+    <Form onSubmit={handleSubmit}>
+      <Stack gap={2}>
+        <Form.Group>
+          <Form.Label htmlFor="title">title</Form.Label>
+          <Form.Control
+            type="text"
+            name="title"
+            id="title"
+            title="Post Title"
+            placeholder="enter title"
+            value={title}
+            onChange={handleChange}
+          />
+        </Form.Group>
+        <Form.Group>
+          <Form.Label htmlFor="body" className="d-flex justify-content-between">
+            body
+            <Form.Text>
+              -you can enter plain text or markdown
+              <a
+                href="https://commonmark.org/"
+                title="link to commonMark.org"
+                className="text-dark"
+              >
+                <FontAwesomeIcon icon={faMarkdown} className="ms-2" />
+              </a>
+            </Form.Text>
+          </Form.Label>
+          <Form.Control
+            as="textarea"
+            style={{ height: "40vh" }}
+            name="body"
+            id="body"
+            title="Post Body"
+            placeholder="enter body"
+            value={body}
+            onChange={handleChange}
+          />
+        </Form.Group>
+        <InputGroup>
+          <Form.Check
+            label="Publish Post?"
             type="checkbox"
-            aria-label="Checkbox for following text input"
             name="published"
             id="published"
             onChange={handleChange}
             value="true"
           />
-          <label className="mx-2" htmlFor="published">
-            Publish Post?
-          </label>
-        </div>
-      </div>
-      <button type="submit" className="btn btn-primary">
-        Submit
-      </button>
-      <ErrorToast
-        show={showError}
-        setShow={setShowError}
-        errorMessage={errorMessage}
-      />
-    </form>
+        </InputGroup>
+        <Button type="submit" variant="success" className="ms-auto text-light">
+          Submit
+        </Button>
+        <InfoToast
+          show={!!toast}
+          setShow={setToast}
+          message={toast?.message || ""}
+          title={toast?.title || ""}
+        />
+      </Stack>
+    </Form>
   );
 };
 

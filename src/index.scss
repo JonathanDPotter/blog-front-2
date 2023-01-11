@@ -1,8 +1,8 @@
-$header-height: 15vh;
-$footer-height: 5vh;
-$main-height: calc(100vh - $header-height - $footer-height);
-$dark: darkslategrey;
-
+$dark: #264653;
+$light: #e5e5e5;
+$danger: #e76f51;
+$warning: #f4a261;
+$success: #2a9d8f;
 @import "~bootstrap/scss/bootstrap.scss";
 
 * {
@@ -15,6 +15,7 @@ body {
   font-family: monospace;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  background-color: #e9c46a;
 }
 
 code {
@@ -22,32 +23,25 @@ code {
     monospace;
 }
 
-header {
-  height: $header-height;
-}
-
-footer {
-  height: $footer-height;
-}
-
 main {
-  height: $main-height;
   overflow-x: hidden;
+  padding-top: 15vh;
+  padding-bottom: 15vh;
 }
 
-a {
-  text-decoration: none;
-  color: $warning;
+.card-header {
+  background-color: $success;
+  color: $light;
+}
 
-  &:hover {
-    color: lighten($warning, 30%);
+.card-footer {
+  background-color: $warning;
+}
+
+.form-check-input {
+  &:checked {
+    background-color: $dark;
   }
-}
-
-.active {
-  text-decoration: underline;
-  text-underline-offset: 5px;
-  text-decoration-thickness: 3px;
 }
 
 .text-sm {
@@ -60,6 +54,14 @@ a {
 
 .pre-wrap {
   white-space: pre-wrap;
+}
+
+.text-trans {
+  color: transparent;
+}
+
+img {
+  max-width: 100%;
 }
 
 @for $i from 1 through 20 {

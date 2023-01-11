@@ -10,7 +10,7 @@ const centeredModal: FC<ModalProps> = (props) => {
       aria-labelledby="contained-modal-title-vcenter"
       centered
     >
-      <Modal.Header closeButton>
+      <Modal.Header closeButton className="text-bg-dark">
         <Modal.Title id="contained-modal-title-vcenter">
           {props.title}
         </Modal.Title>
@@ -23,7 +23,9 @@ const centeredModal: FC<ModalProps> = (props) => {
         <Button onClick={props.onHide} variant="secondary">
           Cancel
         </Button>
-        <Button onClick={props.confirm} variant="primary">Confirm</Button>
+        <Button onClick={props.confirm} variant="success" className="text-white">
+          Confirm
+        </Button>
       </Modal.Footer>
     </Modal>
   );

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "react-router";
 import api from "../api";
 import Post from "../components/Post";
-import ErrorToast from "../components/ErrorToast";
+import ErrorToast from "../components/InfoToast";
 import { useGetAllPostsQuery } from "../store/postApiSlice";
 import { Spinner } from "react-bootstrap";
 import { PostDocument } from "../interfaces/post.interface";
@@ -33,7 +33,7 @@ const FullPost = () => {
   }, [data]);
 
   return (
-    <div>
+    <>
       {isLoading ? (
         <div className="h-100 w-100 d-flex align-items-center justify-content-center">
           <Spinner animation="border" role="status">
@@ -54,7 +54,7 @@ const FullPost = () => {
           }}
         />
       )}
-    </div>
+    </>
   );
 };
 

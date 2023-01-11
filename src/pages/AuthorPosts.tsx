@@ -35,46 +35,44 @@ const AuthorPosts = () => {
   }, [authorPosts]);
 
   return (
-    <div>
-      <div>
-        {user && <h2>{user.username}'s posts</h2>}
-        {isLoading ? (
-          <div className="h-100 w-100 d-flex align-items-center justify-content-center">
-            <Spinner animation="border" role="status">
-              <span className="visually-hidden">Loading...</span>
-            </Spinner>
-          </div>
-        ) : (
-          sortedPosts?.map((post) => {
-            const {
-              _id,
-              title,
-              body,
-              createdAt,
-              updatedAt,
-              author,
-              userId,
-              published,
-            } = post;
-            return (
-              <Post
-                {...{
-                  _id,
-                  title,
-                  body,
-                  createdAt,
-                  updatedAt,
-                  author,
-                  userId,
-                  published,
-                }}
-                key={_id}
-              />
-            );
-          })
-        )}
-      </div>
-    </div>
+    <>
+      {user && <h2>{user.username}'s posts</h2>}
+      {isLoading ? (
+        <div className="h-100 w-100 d-flex align-items-center justify-content-center">
+          <Spinner animation="border" role="status">
+            <span className="visually-hidden">Loading...</span>
+          </Spinner>
+        </div>
+      ) : (
+        sortedPosts?.map((post) => {
+          const {
+            _id,
+            title,
+            body,
+            createdAt,
+            updatedAt,
+            author,
+            userId,
+            published,
+          } = post;
+          return (
+            <Post
+              {...{
+                _id,
+                title,
+                body,
+                createdAt,
+                updatedAt,
+                author,
+                userId,
+                published,
+              }}
+              key={_id}
+            />
+          );
+        })
+      )}
+    </>
   );
 };
 

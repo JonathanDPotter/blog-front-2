@@ -7,7 +7,8 @@ import { dark } from "react-syntax-highlighter/dist/esm/styles/prism";
 import { useAppSelector } from "../store/hooks";
 import { useGetAllPostsQuery } from "../store/postApiSlice";
 import api from "../api";
-import ErrorToast from "./ErrorToast";
+import InfoToast from "./InfoToast";
+import { StringExpressionOperatorReturningBoolean } from "mongoose";
 
 interface Props {
   _id: string;
@@ -45,8 +46,10 @@ const Post: FC<Props> = ({
   const [newTitle, setNewTitle] = useState("");
   const [newBody, setNewBody] = useState("");
   const [isPublished, setIsPublished] = useState(true);
-  const [showError, setShowError] = useState(false);
-  const [errorMessage, setErrorMessage] = useState("");
+  const [toast, setToast] = useState<{
+    title: string;
+    message: string;
+  } | null>(null);
 
   // length in characters of the preview on the home page
   const previewLength = 200;
@@ -65,8 +68,7 @@ const Post: FC<Props> = ({
       refetch();
       setEditing(false);
     } catch (error: any) {
-      setErrorMessage(error.message);
-      setShowError(true);
+      setToast({ title: "Error", message: error.message });
     }
   };
 
@@ -86,11 +88,10 @@ const Post: FC<Props> = ({
 
     try {
       const response = await api.deletePost(_id, token);
-      alert(response?.data);
+      setToast({ title: response?.statusText, message: response?.data });
       refetch();
     } catch (error: any) {
-      setErrorMessage(error.message);
-      setShowError(true);
+      setToast({ title: "Error", message: error.message });
     }
   };
 
@@ -107,7 +108,7 @@ const Post: FC<Props> = ({
   });
 
   return (
-    <Card>
+    <Card className="my-4" border="dark">
       <Card.Header>
         <Row>
           <Col>
@@ -206,52 +207,44 @@ const Post: FC<Props> = ({
       </Card.Body>
       <Card.Footer>
         <Row>
-          <Col>
-            <Card.Text>{new Date(createdAt).toLocaleDateString()}</Card.Text>
+          <Card.Text className="d-flex justify-content-between">
+            <span>{new Date(createdAt).toLocaleDateString()}</span>
             {isEdited ? (
-              <Card.Text className="text-sm">
-                Edited: {new Date(updatedAt).toLocaleDateString()}
-              </Card.Text>
+              <small>Edited: {new Date(updatedAt).toLocaleDateString()}</small>
             ) : null}
-          </Col>
-          <Col>{/*intentionally empty*/}</Col>
-          <Col>
-            {!atHome && userIsAuthor ? (
-              <>
-                <Button variant="danger" onClick={handleDelete}>
-                  Delete
-                </Button>
-                {editing ? (
-                  <Button variant="warning" onClick={saveEdits}>
-                    Save
-                  </Button>
-                ) : (
-                  <Button
-                    className="ms-2"
-                    variant="secondary"
-                    onClick={handleEdit}
-                  >
-                    edit
-                  </Button>
-                )}
-                {editing ? (
-                  <Button
-                    className="ms-2"
-                    variant="secondary"
-                    onClick={() => setEditing(false)}
-                  >
-                    cancel
-                  </Button>
-                ) : null}
-              </>
-            ) : null}
-          </Col>
+          </Card.Text>
         </Row>
+        {!atHome && userIsAuthor ? (
+          <Row>
+            <Col className="d-flex gap-2">
+              <Button variant="danger" onClick={handleDelete}>
+                Delete
+              </Button>
+              {editing ? (
+                <Button variant="success" onClick={saveEdits} children="save" />
+              ) : (
+                <Button
+                  variant="secondary"
+                  onClick={handleEdit}
+                  children="edit"
+                />
+              )}
+              {editing ? (
+                <Button
+                  variant="secondary"
+                  onClick={() => setEditing(false)}
+                  children="cancel"
+                />
+              ) : null}
+            </Col>
+          </Row>
+        ) : null}
       </Card.Footer>
-      <ErrorToast
-        show={showError}
-        setShow={setShowError}
-        errorMessage={errorMessage}
+      <InfoToast
+        show={!!toast}
+        setShow={setToast}
+        message={toast?.message || ""}
+        title={toast?.title || ""}
       />
     </Card>
   );

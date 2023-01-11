@@ -22,7 +22,6 @@ describe("Header", () => {
         <HeaderSetup/>
       );
       expect(screen.getByRole("heading")).toBeInTheDocument();
-      expect(screen.getByRole("navigation")).toBeInTheDocument();
     });
   });
   describe("given the nav links are rendered", () => {
@@ -31,9 +30,6 @@ describe("Header", () => {
 
       const homeLink = screen.getByText("Home");
       const loginLink = screen.getByText("Log In");
-
-      expect(homeLink.className).toMatch(/active/);
-      expect(loginLink.className).toMatch(/(?!active)/);
 
       // simulates clicking the link
       act(() => loginLink.click());

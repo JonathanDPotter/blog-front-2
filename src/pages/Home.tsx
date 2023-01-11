@@ -6,7 +6,7 @@ import { useGetAllPostsQuery } from "../store/postApiSlice";
 import api from "../api";
 import { PostDocument } from "../interfaces/post.interface";
 import Post from "../components/Post";
-import ErrorToast from "../components/ErrorToast";
+import InfoToast from "../components/InfoToast";
 
 const Home = () => {
   const { data, error, isLoading } = useGetAllPostsQuery("");
@@ -16,8 +16,9 @@ const Home = () => {
   const [sortedPosts, setSortedPosts] = useState<PostDocument[] | null>(null);
   error && console.log(error);
 
-  const [showError, setShowError] = useState(false);
-  const [errorMessage, setErrorMessage] = useState("");
+  const [toast, setToast] = useState<{ title: string; message: string } | null>(
+    null
+  );
 
   const dispatch = useAppDispatch();
 
@@ -32,9 +33,7 @@ const Home = () => {
         try {
           await api.validate(token);
         } catch (error: any) {
-          setErrorMessage(error.message);
-          setShowError(true);
-          dispatch(logOut());
+          setToast({ title: "Error", message: error.message });
         }
       })();
   }, [data, token, dispatch]);
@@ -47,7 +46,7 @@ const Home = () => {
   }, [publishedPosts]);
 
   return (
-    <div className="h-100">
+    <>
       {user && <h2>{user.username}</h2>}
       {isLoading ? (
         <div className="h-100 w-100 d-flex align-items-center justify-content-center">
@@ -84,12 +83,13 @@ const Home = () => {
           );
         })
       )}
-      <ErrorToast
-        show={showError}
-        setShow={setShowError}
-        errorMessage={errorMessage}
+      <InfoToast
+        show={!!toast}
+        setShow={setToast}
+        message={toast?.message || ""}
+        title={toast?.title || ""}
       />
-    </div>
+    </>
   );
 };
 

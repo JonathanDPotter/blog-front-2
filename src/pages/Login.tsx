@@ -5,7 +5,8 @@ import { useNavigate } from "react-router";
 import { setToken, setUser } from "../store/authSlice";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faInfoCircle } from "@fortawesome/free-solid-svg-icons";
-import ErrorToast from "../components/ErrorToast";
+import InfoToast from "../components/InfoToast";
+import { Button, Container, Form, InputGroup, Stack } from "react-bootstrap";
 
 const Login = () => {
   const initialState = { username: "Test User", password: "Password123" };
@@ -14,8 +15,9 @@ const Login = () => {
   const [register, setRegister] = useState(false);
   const [repeatPassword, setRepeatPassword] = useState("");
   const [showInfo, setShowInfo] = useState(false);
-  const [showError, setShowError] = useState(false);
-  const [errorMessage, setErrorMessage] = useState("");
+  const [toast, setToast] = useState<{ title: string; message: string } | null>(
+    null
+  );
 
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
@@ -27,8 +29,7 @@ const Login = () => {
         const response = await api.register(formState);
         if (!response) return null;
       } catch (error: any) {
-        setErrorMessage(error.message);
-        setShowError(true);
+        setToast({ title: "Error", message: error.message });
       }
     }
 
@@ -40,8 +41,7 @@ const Login = () => {
       setFormState(initialState);
       navigate("/");
     } catch (error: any) {
-      setErrorMessage(error.message);
-      setShowError(true);
+      setToast({ title: "Error", message: error.message });
     }
   };
 
@@ -50,31 +50,34 @@ const Login = () => {
     setFormState({ ...formState, [id]: value });
   };
 
-  const forminputStyles = "form-group row my-1";
-  const formLabelStyles = "col-sm-2 col-form-label";
-  const formInputDivStyles = "col-sm-7";
-  const formWarningStyles = "col-sm-3 col-form-label text-danger";
-
   return (
-    <div className="d-flex h-100 align-items-center">
-      <form onSubmit={handleSubmit} className="w-75 mx-auto">
-        <div className="d-flex justify-content-end w-100">
-          <p className={showInfo ? "text-black" : "text-white"}>
-            You can register your own username or just use the provided default.
-          </p>
-          <FontAwesomeIcon
-            icon={faInfoCircle}
-            onMouseOver={() => setShowInfo(true)}
-            onMouseOut={() => setShowInfo(false)}
-          />
-        </div>
-        <div className={forminputStyles}>
-          <label htmlFor="username" className={formLabelStyles}>
-            username
-          </label>
-          <div className={formInputDivStyles}>
-            <input
-              className="form-control"
+    <Container>
+      <Form onSubmit={handleSubmit}>
+        <Stack gap={3}>
+          <Form.Text className="d-flex justify-content-end">
+            <span className={showInfo ? "text-black" : "text-trans"}>
+              You can register your own username or just use the provided
+              default.
+            </span>
+            <FontAwesomeIcon
+              icon={faInfoCircle}
+              onMouseOver={() => setShowInfo(true)}
+              onMouseOut={() => setShowInfo(false)}
+            />
+          </Form.Text>
+          <InputGroup className="d-flex justify-content-end">
+            <Form.Check
+              type="checkbox"
+              name="checkbox"
+              id="checkbox"
+              label="Register?"
+              onChange={() => setRegister(!register)}
+              checked={register}
+            />
+          </InputGroup>
+          <Form.Group>
+            <Form.Label>username</Form.Label>
+            <Form.Control
               type="text"
               name="username"
               id="username"
@@ -83,19 +86,16 @@ const Login = () => {
               value={username}
               onChange={handleChange}
             />
-          </div>
-          {!username ? (
-            <label className={formWarningStyles}>* required</label>
-          ) : null}
-        </div>
+            {!username ? (
+              <Form.Text className="text-danger">
+                <strong>* required</strong>
+              </Form.Text>
+            ) : null}
+          </Form.Group>
 
-        <div className={forminputStyles}>
-          <label htmlFor="password" className={formLabelStyles}>
-            password
-          </label>
-          <div className={formInputDivStyles}>
-            <input
-              className="form-control"
+          <Form.Group>
+            <Form.Label htmlFor="password">password</Form.Label>
+            <Form.Control
               type={register ? "new-password" : "password"}
               name="password"
               id="password"
@@ -104,19 +104,17 @@ const Login = () => {
               value={password}
               onChange={handleChange}
             />
-          </div>
-          {!password ? (
-            <label className={formWarningStyles}>* required</label>
-          ) : null}
-        </div>
+            {!password ? (
+              <Form.Text className="text-danger">
+                <strong>* required</strong>
+              </Form.Text>
+            ) : null}
+          </Form.Group>
 
-        {register ? (
-          <div className={forminputStyles}>
-            <label htmlFor="repeatPassword" className={formLabelStyles}>
-              repeat password
-            </label>
-            <div className={`${formInputDivStyles} vh-10`}>
-              <input
+          {register ? (
+            <Form.Group>
+              <Form.Label>repeat password</Form.Label>
+              <Form.Control
                 className="form-control"
                 type={register ? "new-password" : "password"}
                 name="repeatPassword"
@@ -128,49 +126,34 @@ const Login = () => {
                   setRepeatPassword(event.currentTarget.value)
                 }
               />
-            </div>
-            {password !== repeatPassword ? (
-              <label className={formWarningStyles}>*must match</label>
-            ) : null}
-          </div>
-        ) : (
-          <div className="col vh-10"></div>
-        )}
-        <div className="input-group mb-3">
-          <div className="input-group-prepend">
-            <div className="input-group-text">
-              <input
-                type="checkbox"
-                name="checkbox"
-                id="checkbox"
-                onChange={() => setRegister(!register)}
-                checked={register}
-                aria-label="Checkbox to toggle registration or login."
-              />
-              <label htmlFor="checkbox" className="ms-2">
-                Register
-              </label>
-            </div>
-          </div>
-        </div>
-        <button
-          type="submit"
-          className="btn btn-primary"
-          disabled={
-            register
-              ? !(password === repeatPassword && !!username)
-              : !(!!username && !!password)
-          }
-        >
-          Submit
-        </button>
-      </form>
-      <ErrorToast
-        show={showError}
-        setShow={setShowError}
-        errorMessage={errorMessage}
+              {password !== repeatPassword ? (
+                <Form.Text className="text-danger">
+                  <strong>*passwords must match</strong>
+                </Form.Text>
+              ) : null}
+            </Form.Group>
+          ) : null}
+
+          <Button
+            className="ms-auto"
+            children={"Submit"}
+            type="submit"
+            variant="dark"
+            disabled={
+              register
+                ? !(password === repeatPassword && !!username)
+                : !(!!username && !!password)
+            }
+          />
+        </Stack>
+      </Form>
+      <InfoToast
+        show={!!toast}
+        setShow={setToast}
+        message={toast?.message || ""}
+        title={toast?.title || ""}
       />
-    </div>
+    </Container>
   );
 };
 
