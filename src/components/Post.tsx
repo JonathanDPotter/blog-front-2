@@ -8,7 +8,7 @@ import { useAppSelector } from "../store/hooks";
 import { useGetAllPostsQuery } from "../store/postApiSlice";
 import api from "../api";
 import InfoToast from "./InfoToast";
-import { StringExpressionOperatorReturningBoolean } from "mongoose";
+import Modal from "./Modal";
 
 interface Props {
   _id: string;
@@ -50,6 +50,7 @@ const Post: FC<Props> = ({
     title: string;
     message: string;
   } | null>(null);
+  const [showModal, setShowModal] = useState(false);
 
   // length in characters of the preview on the home page
   const previewLength = 200;
@@ -79,20 +80,22 @@ const Post: FC<Props> = ({
     setEditing(true);
   };
 
-  const handleDelete = async () => {
-    if (
-      !window.confirm(`Are you sure that you want to delete ${title}?`) ||
-      !token
-    )
-      return;
+  const confirmDelete = () => {
+    setShowModal(true);
+  };
 
-    try {
-      const response = await api.deletePost(_id, token);
-      setToast({ title: response?.statusText, message: response?.data });
-      refetch();
-    } catch (error: any) {
-      setToast({ title: "Error", message: error.message });
-    }
+  const handleDelete = () => {
+    token &&
+      (async () => {
+        try {
+          const response = await api.deletePost(_id, token);
+          setToast({ title: response?.statusText, message: response?.data });
+          refetch();
+        } catch (error: any) {
+          setToast({ title: "Error", message: error.message });
+        }
+        window.location.pathname.match(/fullpost/) && navigate("/");
+      })();
   };
 
   useEffect(() => {
@@ -144,9 +147,12 @@ const Post: FC<Props> = ({
                 <small>published</small>
               </Card.Text>
             ) : (
-              <Card.Text>
-                <small>not published</small>
-              </Card.Text>
+              userIsAuthor &&
+              !atHome && (
+                <Card.Text>
+                  <small>not published</small>
+                </Card.Text>
+              )
             )}
           </Col>
         </Row>
@@ -217,7 +223,7 @@ const Post: FC<Props> = ({
         {!atHome && userIsAuthor ? (
           <Row>
             <Col className="d-flex gap-2">
-              <Button variant="danger" onClick={handleDelete}>
+              <Button variant="danger" onClick={confirmDelete}>
                 Delete
               </Button>
               {editing ? (
@@ -245,6 +251,13 @@ const Post: FC<Props> = ({
         setShow={setToast}
         message={toast?.message || ""}
         title={toast?.title || ""}
+      />
+      <Modal
+        title={`Delete ${title}`}
+        body={`Are you sure you want to delete ${title}?`}
+        onHide={() => setShowModal(false)}
+        confirm={handleDelete}
+        show={showModal}
       />
     </Card>
   );

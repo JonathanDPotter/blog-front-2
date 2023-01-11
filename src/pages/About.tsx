@@ -7,13 +7,13 @@ const About = () => {
         <h2>About</h2>
         <p>
           This website is a single page application built with React.js and
-          TypeScript. It is my second version of the Odin Project blog project. The first was fully functional, but I wanted to update the code with new things that I have learned since originally building it.
+          TypeScript. It is my second version of the Odin Project blog project. The first was fully functional, but I wanted to update the code with new things that I have learned since originally building it. I also used this as an opportunity to further my practice with Bootstrap.
         </p>
         <hr />
         <h3>Technologies used</h3>
         <p>
           This app uses React Router for page routing, Redux for state management,
-          Axios for api calls, and Bootstrap for styling. The back-end is built with Express.js and manages a MongoDB noSQL database to make a full-stack MERN application.
+          Axios for api calls, react-markdown to display markdwon, and Bootstrap for styling. The back-end is built with Express.js and manages a MongoDB noSQL database to make a full-stack MERN application.
         </p>
         <hr />
         <h3>Functionality</h3>

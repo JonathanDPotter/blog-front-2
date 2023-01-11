@@ -47,7 +47,7 @@ const Home = () => {
 
   return (
     <>
-      {user && <h2>{user.username}</h2>}
+      <h2>Welcome {user ? user.username : "Guest"}</h2>
       {isLoading ? (
         <div className="h-100 w-100 d-flex align-items-center justify-content-center">
           <Spinner animation="border" role="status">

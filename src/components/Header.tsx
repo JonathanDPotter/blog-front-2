@@ -5,7 +5,7 @@ import { logOut } from "../store/authSlice";
 import { useNavigate } from "react-router";
 
 const Header = () => {
-  const { token } = useAppSelector((state) => state.auth);
+  const { user, token } = useAppSelector((state) => state.auth);
 
   const navigate = useNavigate();
 
@@ -39,9 +39,14 @@ const Header = () => {
             )}
           </Nav.Item>
           {token ? (
-            <Nav.Item>
-              <Nav.Link href="/makepost">Make a Post</Nav.Link>{" "}
-            </Nav.Item>
+            <>
+              <Nav.Item>
+                <Nav.Link href="/makepost">Make a Post</Nav.Link>{" "}
+              </Nav.Item>
+              <Nav.Item>
+                <Nav.Link href={`authorposts/${user?._id}`}>My Posts</Nav.Link>
+              </Nav.Item>
+            </>
           ) : null}
         </Nav>
       </Container>

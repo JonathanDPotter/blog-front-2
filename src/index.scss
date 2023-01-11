@@ -1,8 +1,8 @@
-$dark: #264653;
-$light: #e5e5e5;
-$danger: #e76f51;
-$warning: #f4a261;
-$success: #2a9d8f;
+$dark: #555b6e;
+$light: #faf9f9;
+$danger: #ffb98a;
+$warning: #bee3db;
+$success: #89b0ae;
 @import "~bootstrap/scss/bootstrap.scss";
 
 * {
@@ -15,7 +15,7 @@ body {
   font-family: monospace;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background-color: #e9c46a;
+  background-color: $light;
 }
 
 code {
@@ -27,6 +27,11 @@ main {
   overflow-x: hidden;
   padding-top: 15vh;
   padding-bottom: 15vh;
+}
+
+.card {
+  border: 3px solid $dark;
+  border-radius: 0.5rem;
 }
 
 .card-header {
