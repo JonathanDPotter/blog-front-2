@@ -40,7 +40,7 @@ const Post: FC<Props> = ({
   const navigate = useNavigate();
 
   const [userIsAuthor, setUserIsAuthor] = useState(false);
-  const [atHome, setAtHome] = useState(false);
+  const [atFullPost, setAtFullPost] = useState(false);
   const [editing, setEditing] = useState(false);
   const [isEdited, setIsEdited] = useState(false);
   const [newTitle, setNewTitle] = useState("");
@@ -94,7 +94,7 @@ const Post: FC<Props> = ({
         } catch (error: any) {
           setToast({ title: "Error", message: error.message });
         }
-        window.location.pathname.match(/fullpost/) && navigate("/");
+        atFullPost && navigate("/");
       })();
   };
 
@@ -103,7 +103,7 @@ const Post: FC<Props> = ({
   }, [user, userId]);
 
   useEffect(() => {
-    pathname === "/" ? setAtHome(true) : setAtHome(false);
+    pathname.match(/fullpost/) ? setAtFullPost(true) : setAtFullPost(false);
   }, [pathname]);
 
   useEffect(() => {
@@ -124,9 +124,11 @@ const Post: FC<Props> = ({
               />
             ) : (
               <Card.Title
-                onClick={atHome ? () => navigate(`fullpost/${_id}`) : () => {}}
-                title={atHome ? "Click to open full post." : "Post Title"}
-                className="pointer"
+                onClick={
+                  !atFullPost ? () => navigate(`/fullpost/${_id}`) : () => {}
+                }
+                title={!atFullPost ? "Click to open full post." : "Post Title"}
+                className={!atFullPost ? "pointer" : ""}
               >
                 {title}
               </Card.Title>
@@ -142,13 +144,13 @@ const Post: FC<Props> = ({
             </Card.Text>
           </Col>
           <Col>
-            {userIsAuthor && published && !atHome ? (
+            {userIsAuthor && published && atFullPost ? (
               <Card.Text>
                 <small>published</small>
               </Card.Text>
             ) : (
               userIsAuthor &&
-              !atHome && (
+              atFullPost && (
                 <Card.Text>
                   <small>not published</small>
                 </Card.Text>
@@ -184,7 +186,7 @@ const Post: FC<Props> = ({
           <ReactMarkdown
             className="pre-wrap"
             children={
-              atHome
+              !atFullPost
                 ? body.substring(0, previewLength) +
                   (body.length > previewLength ? "..." : "")
                 : body
@@ -220,7 +222,7 @@ const Post: FC<Props> = ({
             ) : null}
           </Card.Text>
         </Row>
-        {!atHome && userIsAuthor ? (
+        {atFullPost && userIsAuthor ? (
           <Row>
             <Col className="d-flex gap-2">
               <Button variant="danger" onClick={confirmDelete}>
