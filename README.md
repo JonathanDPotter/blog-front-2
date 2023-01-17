@@ -18,3 +18,5 @@ When a user opens the home page they can view all published blog posts. The newe
 ## A note on testing
 
 I would have tested more components and pages, but react-markdown interfered with the function of jest in ways that I couldn't fix. I certainly would have liked to have included more tests for my app.
+
+![image](https://user-images.githubusercontent.com/30156468/212110328-e3049fba-7d14-44b1-b8dd-84ec62cbab2b.png)
