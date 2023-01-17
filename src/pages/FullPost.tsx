@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router";
-import api from "../api";
 import Post from "../components/Post";
-import ErrorToast from "../components/InfoToast";
 import { useGetAllPostsQuery } from "../store/postApiSlice";
 import { Spinner } from "react-bootstrap";
 import { PostDocument } from "../interfaces/post.interface";
@@ -14,8 +12,6 @@ const FullPost = () => {
   error && console.log(error);
 
   const [post, setPost] = useState<PostDocument | null>(null);
-  const [showError, setShowError] = useState(false);
-  const [errorMessage, setErrorMessage] = useState("");
   const { _id, title, body, createdAt, updatedAt, author, userId, published } =
     post || {
       _id: "",

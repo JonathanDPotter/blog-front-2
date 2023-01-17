@@ -6,7 +6,7 @@ interface StoreUser {
   username: string;
 }
 
-interface AuthSliceState {
+export interface AuthSliceState {
   token: string | null;
   user: StoreUser | null;
 }

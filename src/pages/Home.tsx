@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { Spinner } from "react-bootstrap";
-import { logOut } from "../store/authSlice";
 import { useAppDispatch, useAppSelector } from "../store/hooks";
 import { useGetAllPostsQuery } from "../store/postApiSlice";
 import api from "../api";

@@ -21,7 +21,9 @@ const ErrorToast: FC<Props> = ({ show, setShow, message, title }) => {
         <Toast.Header>
           <strong className="me-auto">{title}</strong>
         </Toast.Header>
-        <Toast.Body>{message}</Toast.Body>
+        <Toast.Body>
+          <p>{message}</p>
+        </Toast.Body>
       </Toast>
     </ToastContainer>
   );

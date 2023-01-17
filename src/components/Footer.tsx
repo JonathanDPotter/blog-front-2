@@ -1,7 +1,10 @@
 import React from "react";
-import { Container, Nav, Navbar } from "react-bootstrap";
+import { Button, Container, Nav, Navbar } from "react-bootstrap";
+import { useNavigate } from "react-router";
+import { Link } from "react-router-dom";
 
 const Footer = () => {
+  const navigate = useNavigate();
   return (
     <Navbar as="footer" bg="dark" variant="dark" fixed="bottom">
       <Container>

@@ -1,41 +1,64 @@
-import { act, render, screen } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
 import Header from "../components/Header";
-import { BrowserRouter } from "react-router-dom";
 import { Provider } from "react-redux";
 import { store } from "../store";
+import { BrowserRouter } from "react-router-dom";
 import { FC } from "react";
+import loggedInStore from "../store/testStore/loggedinStore";
 
-const HeaderSetup: FC = () => {
-return (
-  <Provider store={store}>
-    <BrowserRouter>
-      <Header />
-    </BrowserRouter>
-  </Provider>
-);
-}
+const ProviderRouter = (props: any) => {
+  return (
+    <Provider store={props.testStore}>
+      <BrowserRouter>{props.children}</BrowserRouter>
+    </Provider>
+  );
+};
 
-describe("Header", () => {
+describe("Header for guest user", () => {
+  const HeaderSetup: FC = () => {
+    return (
+      <ProviderRouter testStore={store}>
+        <Header />
+      </ProviderRouter>
+    );
+  };
+
   describe("given the header has rendered properly", () => {
-    it("should show the title and nav", () => {
-      render(
-        <HeaderSetup/>
-      );
+    it("should show the title", () => {
+      render(<HeaderSetup />);
       expect(screen.getByRole("heading")).toBeInTheDocument();
     });
   });
+
   describe("given the nav links are rendered", () => {
-    it("should react to navigation changes", () => {
+    it("should show the nav links", () => {
       render(<HeaderSetup />);
 
-      const homeLink = screen.getByText("Home");
-      const loginLink = screen.getByText("Log In");
+      expect(screen.getByText(/Home/)).toBeInTheDocument();
+      expect(screen.getByText(/Log In/)).toBeInTheDocument();
+    });
+  });
+});
 
-      // simulates clicking the link
-      act(() => loginLink.click());
+describe("header for logged in user", () => {
+  const HeaderSetup: FC = () => {
+    return (
+      <ProviderRouter testStore={loggedInStore}>
+        <Header />
+      </ProviderRouter>
+    );
+  };
 
-      expect(homeLink.className).toMatch(/(?!active)/);
-      expect(loginLink.className).toMatch(/active/);
+  describe("given the links are displayed correctly", () => {
+    it("should show Log Out, Make a Post and My Posts", async () => {
+      render(<HeaderSetup />);
+
+      expect(screen.getByRole("heading")).toBeInTheDocument();
+
+      expect(await screen.findByText(/Home/)).toBeInTheDocument();
+      expect(await screen.findByText(/Log Out/)).toBeInTheDocument();
+      expect(await screen.findByText(/Make a Post/)).toBeInTheDocument();
+      expect(await screen.findByText(/My Posts/)).toBeInTheDocument();
     });
   });
 });

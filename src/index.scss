@@ -5,6 +5,10 @@ $warning: #bee3db;
 $success: #89b0ae;
 @import "~bootstrap/scss/bootstrap.scss";
 
+.location {
+  opacity: 0;
+}
+
 * {
   box-sizing: border-box;
   margin: 0;

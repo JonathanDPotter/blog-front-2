@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useAppSelector } from "../store/hooks";
-import { Button, Container, Modal, Nav, Navbar } from "react-bootstrap";
+import { Container, Modal, Nav, Navbar } from "react-bootstrap";
 import { logOut } from "../store/authSlice";
 import { useNavigate } from "react-router";
 
@@ -25,6 +25,7 @@ const Header = () => {
         <Nav
           className="justify-content-center"
           fill
+          as="nav"
           role="navigation"
           activeKey={window.location.pathname}
         >
