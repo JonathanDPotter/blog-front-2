@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { FC, useEffect, useState } from "react";
 import { useAppSelector } from "../store/hooks";
 import { useParams } from "react-router";
 import { PostDocument } from "../interfaces/post.interface";
@@ -6,7 +6,7 @@ import { useGetAllPostsQuery } from "../store/postApiSlice";
 import Post from "../components/Post";
 import { Spinner } from "react-bootstrap";
 
-const AuthorPosts = () => {
+const AuthorPosts: FC = () => {
   const { user } = useAppSelector((store) => store.auth);
   const { id } = useParams();
 
@@ -36,7 +36,9 @@ const AuthorPosts = () => {
 
   return (
     <>
-      {user && <h2>{user.username}'s posts</h2>}
+      {authorPosts && authorPosts.length > 0 && (
+        <h2>{authorPosts[0].author}'s posts</h2>
+      )}
       {isLoading ? (
         <div className="h-100 w-100 d-flex align-items-center justify-content-center">
           <Spinner animation="border" role="status">
